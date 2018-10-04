@@ -3,7 +3,7 @@
 
 #include "userfile.h"
 
-;;;int MainMenu(void);
+int MainMenu(void);
 void Instruction(void);
 void About(void);
 void Difficulty(void);

@@ -28,14 +28,8 @@ UserFile::UserFile(const char *s)
     User us;
     int size;
     CharToFont(s, fname);
-    f_handle = Bfile_OpenFile(fname, _OPENMODE_READWRITE);
-    if(!f_handle)
-    {
-        Bfile_CreateFile(fname, 0);
-        f_handle = Bfile_OpenFile(fname, _OPENMODE_READWRITE);
-        d_num = 0;
-    }
-    else
+    int f_handle = Bfile_OpenFile(fname, _OPENMODE_READWRITE);
+    if(f_handle)
     {
         size = Bfile_GetFileSize(f_handle) / USER_SIZE;
         for(int i = 0;i != size; ++i)
@@ -44,6 +38,7 @@ UserFile::UserFile(const char *s)
             d_users.push_back(us);
         }
         d_num = 0;
+        Bfile_CloseFile(f_handle);
     }
 }
 
@@ -68,16 +63,17 @@ bool UserFile::AddUser(const User &us)
 
 void UserFile::flush(void)
 {
-    if(d_num <= 0 || !d_users.size())
+    if(/*d_num <= 0 || */!d_users.size())
         return ;
     Bfile_DeleteFile(fname);
     Bfile_CreateFile(fname, USER_SIZE * d_users.size());
-    f_handle = Bfile_OpenFile(fname, _OPENMODE_READWRITE);
+    int f_handle = Bfile_OpenFile(fname, _OPENMODE_READWRITE);
     for(int i = 0;i != d_users.size();++i)
     {
         Bfile_SeekFile(f_handle, i * USER_SIZE);
         Bfile_WriteFile(f_handle, &d_users[i], USER_SIZE);
     }
+    Bfile_CloseFile(f_handle);
 }
 
 void UserFile::show(int num, int upp)

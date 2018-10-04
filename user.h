@@ -4,7 +4,7 @@
 #include "userfile.h"
 
 //Logins
-;int LoginMenu(void);
+int LoginMenu(void);
 bool GetUser(UserFile &us);
 bool RegisterAccount(UserFile &us);
 bool Visitor(UserFile &us);
